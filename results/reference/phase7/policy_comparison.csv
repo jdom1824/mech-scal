@@ -1,0 +1,4 @@
+comparison,absolute_success_rate_difference,absolute_latency_p50_difference_ms
+Fixed-3 vs Fixed-5,0.003958436417615063,1.2627752892870852e-05
+Fixed-5 vs Logarithmic,-0.02980193876050541,5.83365204678362e-05
+Fixed-3 vs Logarithmic,-0.025843502342890345,6.91275093035622e-05

@@ -1,0 +1,5 @@
+metric,median_difference,ci_low,ci_high
+time_median_difference,0.3862574719969416,0.23168621500371955,0.5022428439988289
+sqlite_size_median_difference,233472.0,233472.0,233472.0
+peak_rss_median_difference,386.0,384.0,396.0
+lookup_median_difference_ms,0.003207999999999999,0.0029175000000000017,0.003209

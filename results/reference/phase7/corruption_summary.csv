@@ -1,0 +1,7 @@
+policy,scenario,retrieval_strategy,successes,attempts,success_rate,ci95_low,ci95_high,failure_rate,timeout_rate,checksum_failure_rate,p50_retrieval_latency_ms,p95_retrieval_latency_ms,p99_retrieval_latency_ms,mean_replicas_contacted,mean_surviving_replicas,maximum_tolerated_failures,probability_complete_object_loss,bytes_read_per_successful_retrieval
+Fixed-3,corruption:single-corrupt,parallel-first-valid,1710,1710,1.0,0.9977584859650974,1.0000000000000002,0.0,0.0,1.0,0.107843,0.15098,0.168235,3.0,3.0,2,0.0,1819.140350877193
+Fixed-3,corruption:single-corrupt,sequential,1710,1710,1.0,0.9977584859650974,1.0000000000000002,0.0,0.0,1.0,0.262745,0.340783,0.351764,2.0,3.0,2,0.0,2647.9122807017543
+Fixed-5,corruption:single-corrupt,parallel-first-valid,1710,1710,1.0,0.9977584859650974,1.0000000000000002,0.0,0.0,1.0,0.095294,0.138039,0.146274,5.0,5.0,4,0.0,1605.982456140351
+Fixed-5,corruption:single-corrupt,sequential,1710,1710,1.0,0.9977584859650974,1.0000000000000002,0.0,0.0,1.0,0.263529,0.329803,0.342352,2.0,5.0,4,0.0,2647.9122807017543
+Logarithmic,corruption:single-corrupt,parallel-first-valid,1710,1710,1.0,0.9977584859650974,1.0000000000000002,0.0,0.0,1.0,0.088235,0.12196,0.142352,8.0,13.0,12,0.0,1557.6140350877192
+Logarithmic,corruption:single-corrupt,sequential,1710,1710,1.0,0.9977584859650974,1.0000000000000002,0.0,0.0,1.0,0.264705,0.329803,0.339215,2.0,13.0,12,0.0,2647.9122807017543

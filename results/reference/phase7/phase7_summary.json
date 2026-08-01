@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "tests_expected": "unittest discover -s tests",
+  "retrieval_observations": 495900,
+  "recovery_observations": 630762,
+  "success_rate_by_policy": {
+    "Fixed-3": 0.9534883720930233,
+    "Fixed-5": 0.9574468085106383,
+    "Logarithmic": 0.9276448697501329
+  },
+  "maximum_tolerated_failures": {
+    "Fixed-3": 2,
+    "Fixed-5": 4,
+    "Logarithmic": 12
+  },
+  "latency_summary_by_policy": {
+    "Fixed-3": {
+      "p50_ms": 0.1545095,
+      "p95_ms": 0.31287139999999997,
+      "p99_ms": 0.341175
+    },
+    "Fixed-5": {
+      "p50_ms": 0.169803,
+      "p95_ms": 0.3162735,
+      "p99_ms": 0.3386265
+    },
+    "Logarithmic": {
+      "p50_ms": 0.166078,
+      "p95_ms": 0.2986265,
+      "p99_ms": 0.334509
+    }
+  },
+  "recovery_bytes_by_policy": {
+    "fixed3": 110189424,
+    "fixed5": 187111276,
+    "log13": 470111436
+  },
+  "objects_irrecoverable_without_external_source": 49590
+}
