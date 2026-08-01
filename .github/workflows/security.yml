@@ -1,0 +1,19 @@
+name: security
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  scans:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Secret pattern scan
+        run: |
+          ! rg -n "github[_]pat_|gh[p]_|rpcpass[word]|BEGIN OPENSSH PRIVATE [K]EY|/[h]ome/|/[U]sers/" . \
+            --glob '!results/reference/**' \
+            --glob '!.git/**'
