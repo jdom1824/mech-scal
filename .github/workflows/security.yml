@@ -11,7 +11,7 @@ jobs:
   scans:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Secret pattern scan
         run: |
           ! rg -n "github[_]pat_|gh[p]_|rpcpass[word]|BEGIN OPENSSH PRIVATE [K]EY|/[h]ome/|/[U]sers/" . \
