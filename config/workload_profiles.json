@@ -1,0 +1,52 @@
+{
+  "profiles": [
+    {
+      "name": "small",
+      "threshold_blocks": 24,
+      "max_outputs": 100,
+      "allow_execution": true,
+      "requires_flag": false,
+      "groups": [
+        {"name": "same-block", "count": 5, "spend_age_blocks": 0, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "one-block", "count": 10, "spend_age_blocks": 1, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "short-lived", "count": 10, "spend_age_blocks": 6, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "early-window", "count": 10, "spend_age_blocks": 12, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "operational-boundary", "count": 10, "spend_age_blocks": 24, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "post-boundary", "count": 10, "spend_age_blocks": 36, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "long-lived-unspent", "count": 20, "spend_age_blocks": null, "expected_state_at_end": "unspent", "value_btc": "0.00120000"}
+      ]
+    },
+    {
+      "name": "medium",
+      "threshold_blocks": 24,
+      "max_outputs": 1000,
+      "allow_execution": false,
+      "requires_flag": false,
+      "groups": [
+        {"name": "same-block", "count": 50, "spend_age_blocks": 0, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "one-block", "count": 150, "spend_age_blocks": 1, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "short-lived", "count": 150, "spend_age_blocks": 6, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "early-window", "count": 150, "spend_age_blocks": 12, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "operational-boundary", "count": 150, "spend_age_blocks": 24, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "post-boundary", "count": 150, "spend_age_blocks": 36, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "long-lived-unspent", "count": 150, "spend_age_blocks": null, "expected_state_at_end": "unspent", "value_btc": "0.00120000"}
+      ]
+    },
+    {
+      "name": "large",
+      "threshold_blocks": 24,
+      "max_outputs": 10000,
+      "allow_execution": false,
+      "requires_flag": true,
+      "groups": [
+        {"name": "same-block", "count": 500, "spend_age_blocks": 0, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "one-block", "count": 1500, "spend_age_blocks": 1, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "short-lived", "count": 1500, "spend_age_blocks": 6, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "early-window", "count": 1500, "spend_age_blocks": 12, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "operational-boundary", "count": 1500, "spend_age_blocks": 24, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "post-boundary", "count": 1500, "spend_age_blocks": 36, "expected_state_at_end": "spent", "value_btc": "0.00120000"},
+        {"name": "long-lived-unspent", "count": 2000, "spend_age_blocks": null, "expected_state_at_end": "unspent", "value_btc": "0.00120000"}
+      ]
+    }
+  ]
+}

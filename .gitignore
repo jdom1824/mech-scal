@@ -1,0 +1,44 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.venv/
+.env
+.env.local
+.runtime/
+build/
+dist/
+*.egg-info/
+
+# Local runtime state
+logs/
+data/baseline/
+data/mech_scal/
+data/benchmarks/
+data/resilience/
+results/baseline/
+results/mech_scal/
+results/benchmark/figures/
+results/resilience/figures/
+
+# Internal audit and local diagnostics
+REPOSITORY_AUDIT.md
+REPOSITORY_QUALITY_REPORT.md
+docs/internal/
+
+# Generated files that still embed local paths
+results/reference/phase7/validation_results.csv
+results/reference/phase7/phase7_build_summary.json
+results/reference/phase7/phase7_failure_state.json
+results/reference/phase7/phase7_report.md
+results/reference/phase7/raw_recovery_observations_primary.csv
+results/figures/section_5_4/figure_generation_report.md
+results/figures/section_5_4/figure_generation_report_final.md
+results/figures/section_5_4/figure_data_summary.csv
+results/figures/section_5_4/figure_data_summary_final.csv
+results/figures/section_5_4/generate_section_5_4_figures.py
+results/figures/section_5_4/generate_section_5_4_figures_final.py
