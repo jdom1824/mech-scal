@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: "mech-scal"
+message: "If you use this research prototype, please cite the associated paper and this software artifact."
+type: software
+authors:
+  - alias: "jdom1824"
+version: 0.1.0
+date-released: 2026-08-01
+repository-code: "https://github.com/jdom1824/mech-scal"
+abstract: >
+  Output-aware replication and experimental indexing prototype for scalable
+  storage in UTXO blockchains.
