@@ -1,0 +1,31 @@
+{
+  "seed": 20260731,
+  "t_min": 24,
+  "end_height": 999,
+  "first_cohort_height": 102,
+  "cadence": 40,
+  "value_btc": "0.00120000",
+  "spend_fee_btc": "0.00010000",
+  "groups": [
+    ["same-block", 5, 0],
+    ["one-block", 10, 1],
+    ["short-lived", 10, 6],
+    ["early-window", 10, 12],
+    ["operational-boundary", 10, 24],
+    ["post-boundary", 10, 36],
+    ["long-lived-unspent", 20, null]
+  ],
+  "warmups_per_system": 1,
+  "pair_order": [["baseline", "mech_scal"], ["mech_scal", "baseline"], ["baseline", "mech_scal"]],
+  "lookup_target_limit": 256,
+  "lookup_repetitions": 30,
+  "ram_stop_fraction": 0.85,
+  "ram_sustained_fraction": 0.80,
+  "ram_sustained_seconds": 60,
+  "free_disk_min_gib": 20,
+  "pair_timeout_seconds": 1800,
+  "swap_io_mib_per_second": 1,
+  "swap_io_sustained_seconds": 10,
+  "instrumentation": "warmup_only",
+  "cache_policy": "warmed_local_cache_no_OS_cache_drop"
+}
