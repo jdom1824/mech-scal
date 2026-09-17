@@ -158,7 +158,7 @@ def main() -> int:
     output = RESULTS / "table6_reproduced.csv"
     fields = list(out[0])
     with output.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(out)
 
