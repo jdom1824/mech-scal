@@ -1,0 +1,41 @@
+{
+  "experiment_id": "MECHSCAL-ID26-FINAL-DIRECT-SRS-20260924",
+  "frozen_utc": "2026-09-24T20:18:10.445936+00:00",
+  "n": 17000,
+  "n_h": [
+    1000,
+    3463,
+    6322,
+    6215
+  ],
+  "pi_h": [
+    0.00010701821150308791,
+    1.4447698006514722e-05,
+    1.444676895795652e-05,
+    1.444884955214332e-05
+  ],
+  "population_T_h": [
+    9344204,
+    239692164,
+    437606500,
+    430138052
+  ],
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "rationale": "Target 2 percentage points for all eight contrasts is adequate to resolve largest-class ordering at the large pilot dominance gaps. A 4x variance inflation addresses only 45 unequal-probability pilot observations; minimum 1000 per era provides diagnostic coverage, with an overall floor of 10000 transactions. Proportional allocation avoids trusting unstable pilot Neyman differences. It is not a guarantee of achieved precision. Final precision and dominance are evaluated without further sample enlargement.",
+  "rng": "CPython random.Random MT19937 + Floyd SRSWOR; sorted ascending ordinals; strata H1 H2 H3 H4",
+  "scientific_rule": "All six individual lower 95% dominance bounds >0; report simultaneous Bonferroni 95% family-wise bounds as additional evidence. If any primary contrast halfwidth exceeds 2 pp or a singleton drives an estimate beyond that scale, report inference unstable rather than resize.",
+  "seed_derivation": "int.from_bytes(SHA256(ASCII(experiment_id + \"|H\" + stratum_number)), \"big\")",
+  "stratum_seeds": [
+    "19147701802310067275439717057048703924651850389645006326792431663080147787140",
+    "108456925251813191844521502229189987236825308744350630552815125371168638028297",
+    "28106398489924818058594293574641258782331541764572010328545146879288735065736",
+    "78654478391643131862635432674331924851664563309794836976782110713024780723823"
+  ],
+  "target_halfwidth_pp": 2.0,
+  "weights": [
+    9344.204,
+    69215.17874675138,
+    69219.6298639671,
+    69209.66242960579
+  ]
+}

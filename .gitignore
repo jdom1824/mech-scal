@@ -42,3 +42,30 @@ results/figures/section_5_4/figure_data_summary.csv
 results/figures/section_5_4/figure_data_summary_final.csv
 results/figures/section_5_4/generate_section_5_4_figures.py
 results/figures/section_5_4/generate_section_5_4_figures_final.py
+
+# Local manuscript and publication material: never version these artifacts.
+paper/
+submission/
+overleaf/
+Overleaf/
+**/submission/
+**/reviewer-response*/
+**/reviewer-comments*/
+**/latexdiff*/
+**/*manuscript*/
+**/*overleaf*/
+**/*Overleaf*/
+**/*IEEE*Access*/
+**/*Submission*.zip
+**/*Overleaf*.zip
+**/*latexdiff*.zip
+
+# LaTeX sources and generated auxiliary files are publication-only here.
+*.tex
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.bib

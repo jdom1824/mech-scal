@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "required_artifacts": 23,
+  "transactions": 17000,
+  "outputs": 46962,
+  "class_counts": {
+    "IM": 42457,
+    "ML": 2496,
+    "UNASSIGNED": 1906,
+    "MH": 103
+  },
+  "sha256_freezes_verified": true,
+  "independent_attribution_and_cluster_recomputation": true,
+  "independent_weighted_totals_and_ratios": true,
+  "independent_variance_and_ci_recomputation": true,
+  "maximum_conservation_error_bytes": 7.275957614183426e-12,
+  "five_largest_influence_direct_delete_one_checks": true,
+  "independent_full_frame_and_selected_ordinal_mapping": true,
+  "frozen_seed_manifest_reproduction": true,
+  "maximum_variance_absolute_difference": 3.7947076036992655e-19,
+  "max_loo_change_pp": 1.869948134489996,
+  "scope": "Saved artifact arithmetic audit; no new sample, database access or block reads."
+}

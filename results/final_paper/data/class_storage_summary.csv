@@ -1,0 +1,4 @@
+block_height,class,exact_gib,reported_gib,reported_share_percent,accounting_definition
+870429,MH,5.788189373109457,5.79,1.01,classified unspent-output storage
+870429,ML,34.98540045004359,34.99,6.10,classified unspent-output storage
+870429,IM,532.3555525948569,532.36,92.89,classified spent-output historical storage

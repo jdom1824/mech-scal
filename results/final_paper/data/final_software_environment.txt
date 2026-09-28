@@ -1,0 +1,15 @@
+{
+  "mounts": {
+    "/mnt/bitcoin_hdd_old_ro": "ro,nosuid,nodev,noexec,relatime,norecovery",
+    "/mnt/mech_scal_old_ro": "ro,nosuid,nodev,noexec,relatime,norecovery"
+  },
+  "platform": "Linux-6.1.115-vendor-rk35xx-aarch64-with-glibc2.41",
+  "plyvel": "1.5.1",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "source_sha256": {
+    "final_core.py": "2c52072dc8dbec364326453c19af747644758e6d63ddefabcc696abfd0e65907",
+    "final_io.py": "700e6ddfa1125e7344af4c9c6b6296f6a907ed85735896f2824a257a930726a7",
+    "id26_pipeline.py": "24801e1b0a2429ff380c753e6af859e23f034f9df7c2ddb99e8f3fa85893fffb",
+    "run_final.py": "f031223a1b53dc877ea027a6cd6ad0e87f917ff9a32bffb638f46fb755d89a70"
+  }
+}

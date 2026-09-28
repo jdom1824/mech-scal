@@ -42,6 +42,32 @@ flowchart LR
 
 The compact prototype uses `T_min = 24` only to trigger transitions in a short regtest workload. The historically analyzed operational boundary remains `2,016` blocks.
 
+## Final experimental evidence
+
+The repository now includes a bounded, processed evidence bundle for the final
+experimental evaluation. It records the mainnet reconstruction frame through
+block `870429`, storage-attribution sensitivity over 17,000 sampled
+transactions and 46,962 original outputs, threshold sensitivity, the
+50,000-consecutive-full-block stress scenario, and replication/storage
+sensitivity.
+
+The evaluated practical threshold pair is `T_min = 2,016` and
+`T_max = 26,280`; these are experimental parameters, not a universal or
+theoretically optimal choice. Method B in the attribution study is serialized
+output bytes only, not measured physical storage.
+
+Run the repository-local arithmetic audit with:
+
+```bash
+python3 scripts/verify_final_paper_results.py
+```
+
+See [`docs/final-experiment-audit.md`](docs/final-experiment-audit.md) and
+[`results/final_paper/README.md`](results/final_paper/README.md) for the
+artifact map, exact reported summaries, provenance boundaries, and known
+limitations. Manuscript, LaTeX/Overleaf, submission, reviewer-response, and
+publication-only artifacts are intentionally excluded.
+
 ## Reference results
 
 Deterministic functional checks:
@@ -118,7 +144,7 @@ See:
 - `tests/`: local logic and regression tests.
 - `results/reference/phase6/`: paired benchmark reference artifacts.
 - `results/reference/phase7/`: resilience reference artifacts.
-- `results/figures/section_5_4/`: final paper-ready Section 5.4 figures.
+- `results/figures/section_5_4/`: generated experimental figures for the local prototype evaluation.
 
 ## Extending the evaluation
 

@@ -1,0 +1,15 @@
+{
+  "eligible_transaction_total": 1116780920,
+  "raw_tx_count_sum": 1116780921,
+  "rows": 870430,
+  "sha256": "779b069a44fec34cb6db5502cd7af2b40812bf04a76e85f9546e432f9184d3c5",
+  "stratum_transaction_totals": [
+    9344204,
+    239692164,
+    437606500,
+    430138052
+  ],
+  "target_hash": "00000000000000000001878ae0c4060f829861481758879b15af57461b6a3b09",
+  "target_height": 870429,
+  "threshold_creation_cutoff": 868034.3274
+}

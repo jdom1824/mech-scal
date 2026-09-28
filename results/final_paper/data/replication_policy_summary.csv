@@ -1,0 +1,7 @@
+policy,replication_factor,reported_storage_tib,reported_reduction_percent,failure_tolerance
+Fixed-3,3,240.47,97.61,2
+Fixed-5,5,241.51,97.60,4
+Logarithmic,13,245.67,97.56,12
+Proportional-1%,60,270.10,97.32,59
+Square-root,78,279.46,97.23,77
+Layer-full IM,6000,3358.18,66.67,5999

@@ -1,0 +1,4 @@
+method,sample_transactions,original_outputs,im_share_exact_percent,reported_im_share_percent,accounting_boundary
+A,17000,46962,92.32517091203335,92.33,method-specific modeled output-byte attribution
+B,17000,46962,93.77575443094679,93.78,serialized output bytes only; not measured physical storage
+C,17000,46962,92.38476047777403,92.38,method-specific modeled output-byte attribution

@@ -1,0 +1,5 @@
+policy,replicated_storage_gib,reported_reduction_percent,network_nodes,layer_nodes,im_replication_factor,source
+Full replication,10316324.56,0.00,18000,18000,18000,canonical processed storage calculation
+Class partitioning only,3438774.85,66.67,18000,6000,6000,canonical processed storage calculation
+Reduced IM replication only,740845.24,92.82,18000,6000,13,canonical processed storage calculation
+Complete Mech-Scal,251562.16,97.56,18000,6000,13,canonical processed storage calculation
