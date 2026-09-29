@@ -16,6 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "results" / "final_paper" / "data"
+REFERENCE = ROOT / "results" / "reference"
 
 
 def fail(message: str) -> None:
@@ -35,6 +36,21 @@ def load_json(name: str) -> dict:
     if not path.is_file():
         fail(f"missing artifact: {path.relative_to(ROOT)}")
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_reference_json(relative_path: str) -> dict:
+    path = REFERENCE / relative_path
+    if not path.is_file():
+        fail(f"missing reference artifact: {path.relative_to(ROOT)}")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def csv_data_rows(relative_path: str) -> int:
+    path = REFERENCE / relative_path
+    if not path.is_file():
+        fail(f"missing reference artifact: {path.relative_to(ROOT)}")
+    with path.open(newline="", encoding="utf-8") as handle:
+        return sum(1 for _ in csv.DictReader(handle))
 
 
 def close(actual: float, expected: float, tolerance: float = 1e-10) -> bool:
@@ -122,22 +138,37 @@ def main() -> None:
     reduced_im = non_im * Decimal(18000) + im * Decimal(13)
     complete = non_im * Decimal(6000) + im * Decimal(13)
     table5 = {
-        "Full replication": (full, Decimal("0.00")),
-        "Class partitioning only": (class_partition, Decimal("66.67")),
-        "Reduced IM replication only": (reduced_im, Decimal("92.82")),
-        "Complete Mech-Scal": (complete, Decimal("97.56")),
+        "Full replication": (full, Decimal("10316324.56"), Decimal("0.00")),
+        "Class partitioning only": (
+            class_partition,
+            Decimal("3438774.85"),
+            Decimal("66.67"),
+        ),
+        "Reduced IM replication only": (
+            reduced_im,
+            Decimal("740845.24"),
+            Decimal("92.82"),
+        ),
+        "Complete Mech-Scal": (
+            complete,
+            Decimal("251562.16"),
+            Decimal("97.56"),
+        ),
     }
-    expected_gib = {
-        "Full replication": Decimal("10316324.56"),
-        "Class partitioning only": Decimal("3438774.85"),
-        "Reduced IM replication only": Decimal("740845.24"),
-        "Complete Mech-Scal": Decimal("251562.16"),
-    }
-    for name, (value, expected_reduction) in table5.items():
-        if rounded(value) != expected_gib[name]:
-            fail(f"Table 5 {name} changed: {rounded(value)} != {expected_gib[name]}")
-        if name != "Full replication" and expected_reduction <= 0:
-            fail(f"invalid reduction check for {name}")
+    for name, (value, expected_storage, expected_reduction) in table5.items():
+        if rounded(value) != expected_storage:
+            fail(
+                f"Table 5 {name} storage changed: "
+                f"{rounded(value)} != {expected_storage} GiB"
+            )
+        reduction = Decimal("0") if name == "Full replication" else (
+            Decimal("1") - value / full
+        ) * Decimal("100")
+        if rounded(reduction) != expected_reduction:
+            fail(
+                f"Table 5 {name} reduction changed: "
+                f"{rounded(reduction)} != {expected_reduction}%"
+            )
 
     policies = load_csv("im_replication_factor_sensitivity.csv")
     expected_policy = {
@@ -157,6 +188,101 @@ def main() -> None:
         if rounded(Decimal(row["reduction_percent"])) != expected_reduction:
             fail(f"policy {row['policy']} reduction changed")
 
+    alpha_rows = load_csv("alpha_sensitivity.csv")
+    alpha_values = {Decimal(row["alpha"]) for row in alpha_rows}
+    expected_alpha_values = {
+        Decimal(value) for value in ("0.50", "0.75", "1.00", "1.25", "1.50", "2.00")
+    }
+    if alpha_values != expected_alpha_values:
+        fail("alpha sensitivity grid changed")
+    logarithmic = next(row for row in policies if row["policy"] == "Logarithmic")
+    for row in alpha_rows:
+        alpha = Decimal(row["alpha"])
+        replicas = math.ceil(float(alpha) * math.log2(6000))
+        if int(row["m_im"]) != 6000 or int(row["r_im"]) != replicas:
+            fail(f"alpha={alpha} replication factor is inconsistent")
+        expected_storage = non_im * Decimal(6000) + im * Decimal(replicas)
+        if Decimal(row["replicated_storage_gib"]) != expected_storage:
+            fail(f"alpha={alpha} modeled storage is inconsistent with canonical class bytes")
+        expected_reduction = (Decimal(1) - expected_storage / full) * Decimal(100)
+        if Decimal(row["reduction_percent"]) != expected_reduction:
+            fail(f"alpha={alpha} modeled reduction is inconsistent")
+    alpha_one = next(row for row in alpha_rows if Decimal(row["alpha"]) == Decimal("1.00"))
+    if int(alpha_one["r_im"]) != int(logarithmic["r_im"]):
+        fail("alpha=1 does not match the existing Logarithmic policy")
+    if abs(
+        Decimal(alpha_one["replicated_storage_gib"])
+        - Decimal(logarithmic["replicated_storage_gib"])
+    ) > Decimal("1e-20"):
+        fail("alpha=1 storage does not match the existing Logarithmic policy")
+
+    deff_rows = load_csv("d_eff_analytical_sensitivity.csv")
+    expected_deff_pairs = {
+        (d_eff, q_d)
+        for d_eff in (13, 7, 4, 2, 1)
+        for q_d in (Decimal("0.01"), Decimal("0.05"), Decimal("0.10"))
+    }
+    actual_deff_pairs = {
+        (int(row["d_eff"]), Decimal(row["q_d"])) for row in deff_rows
+    }
+    if actual_deff_pairs != expected_deff_pairs:
+        fail("d_eff analytical sensitivity grid changed")
+    for row in deff_rows:
+        d_eff, q_d = int(row["d_eff"]), Decimal(row["q_d"])
+        if Decimal(row["p_loss"]) != q_d**d_eff:
+            fail(f"d_eff={d_eff}, q_D={q_d}: P_loss does not equal q_D**d_eff")
+        if row["evidence_type"] != "analytical sensitivity; illustrative q_D":
+            fail("d_eff result is missing its analytical/illustrative evidence label")
+
+    phase6 = load_reference_json("phase6/phase6_summary.json")
+    if (phase6.get("status"), phase6.get("valid_pairs"), phase6.get("invalid_pairs")) != (
+        "PASS",
+        30,
+        0,
+    ):
+        fail("saved Phase 6 paired-run status or pair counts changed")
+    phase6_expected = {
+        "baseline_time_summary.median": 3.447364944004221,
+        "mech_scal_time_summary.median": 3.8093742529890733,
+        "overhead_percent_summary.median": 10.730663481382233,
+        "bootstrap_intervals.time_median_difference.median_difference": 0.3862574719969416,
+    }
+    for dotted_key, expected in phase6_expected.items():
+        value: object = phase6
+        for key in dotted_key.split("."):
+            if not isinstance(value, dict) or key not in value:
+                fail(f"Phase 6 summary is missing {dotted_key}")
+            value = value[key]
+        if not close(float(value), expected):
+            fail(f"Phase 6 {dotted_key} changed: {value} != {expected}")
+    for filename, expected_rows in {
+        "phase6/raw_processing_runs.csv": 60,
+        "phase6/raw_block_metrics.csv": 60,
+        "phase6/raw_lookup_observations.csv": 427500,
+    }.items():
+        rows = csv_data_rows(filename)
+        if rows != expected_rows:
+            fail(f"Phase 6 {filename} has {rows} rows, expected {expected_rows}")
+
+    phase7 = load_reference_json("phase7/phase7_summary.json")
+    if phase7.get("status") != "PASS":
+        fail("saved Phase 7 summary status is not PASS")
+    for summary_key, filename, expected_rows in (
+        ("retrieval_observations", "phase7/raw_retrieval_observations.csv", 495900),
+        ("recovery_observations", "phase7/raw_recovery_observations.csv", 630762),
+    ):
+        if phase7.get(summary_key) != expected_rows:
+            fail(f"Phase 7 summary {summary_key} changed")
+        rows = csv_data_rows(filename)
+        if rows != expected_rows:
+            fail(f"Phase 7 {filename} has {rows} rows, expected {expected_rows}")
+    if phase7.get("maximum_tolerated_failures") != {
+        "Fixed-3": 2,
+        "Fixed-5": 4,
+        "Logarithmic": 12,
+    }:
+        fail("Phase 7 maximum tolerated failure counts changed")
+
     tmin = load_csv("tmin_sensitivity_summary.csv")
     if {int(row["tmin"]) for row in tmin} != {144, 1008, 2016, 4032, 8064, 13140}:
         fail("Tmin sensitivity set changed")
@@ -175,7 +301,11 @@ def main() -> None:
     print("  block 870429 class bytes and shares: verified")
     print("  attribution methods A/B/C: 17,000 tx / 46,962 outputs verified")
     print("  Table 5 storage arithmetic and policy sensitivity: verified")
+    print("  alpha sensitivity from canonical class bytes: verified")
+    print("  d_eff analytical sensitivity: verified; illustrative q_D only")
     print("  Tmin/Tmax/full-block sensitivity artifacts: verified")
+    print("  Phase 6 saved paired benchmark summary/raw row counts: verified")
+    print("  Phase 7 saved fault/recovery summary/raw row counts: verified")
     print("  ID26 limitation preserved: inference unstable; precision target not met")
 
 

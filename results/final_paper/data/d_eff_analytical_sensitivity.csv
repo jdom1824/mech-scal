@@ -1,0 +1,16 @@
+d_eff,q_d,p_loss,evidence_type
+13,0.01,1E-26,analytical sensitivity; illustrative q_D
+13,0.05,1.220703125E-17,analytical sensitivity; illustrative q_D
+13,0.10,1.0000000000000E-13,analytical sensitivity; illustrative q_D
+7,0.01,1E-14,analytical sensitivity; illustrative q_D
+7,0.05,7.8125E-10,analytical sensitivity; illustrative q_D
+7,0.10,1.0000000E-7,analytical sensitivity; illustrative q_D
+4,0.01,1E-8,analytical sensitivity; illustrative q_D
+4,0.05,0.00000625,analytical sensitivity; illustrative q_D
+4,0.10,0.00010000,analytical sensitivity; illustrative q_D
+2,0.01,0.0001,analytical sensitivity; illustrative q_D
+2,0.05,0.0025,analytical sensitivity; illustrative q_D
+2,0.10,0.0100,analytical sensitivity; illustrative q_D
+1,0.01,0.01,analytical sensitivity; illustrative q_D
+1,0.05,0.05,analytical sensitivity; illustrative q_D
+1,0.10,0.10,analytical sensitivity; illustrative q_D

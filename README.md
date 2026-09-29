@@ -32,10 +32,11 @@ read as one physical deployment or as a single end-to-end network measurement.
 3. **Controlled local experiments:** Bitcoin Core regtest workload generation,
    paired Baseline/Mech-Scal processing, local SQLite retrieval, and IM fault
    and recovery scenarios.
-4. **Synthetic topology simulation:** intended as a complementary sensitivity
-   model for graph-derived hop delays. The topology scripts/configuration and
-   their result bundle are not included in the current tracked checkout, so no
-   synthetic-topology result is claimed as repository-reproducible here.
+4. **Synthetic topology simulation:** a complementary sensitivity model for
+   graph-derived hop delays. The original BA/ER/WS experiment package and its
+   exact run configuration are missing from this repository. Unverified
+   candidate files in a detached local workspace are not claimed as the
+   original experiment or as reproducible evidence.
 
 ## Output classes
 
@@ -97,6 +98,10 @@ Verify the stored arithmetic with:
 python3 scripts/verify_final_paper_results.py
 ```
 
+This repository-level verifier also checks the saved attribution,
+threshold/stress, replication-policy, alpha, `d_eff`, Phase 6, and Phase 7
+artifacts described below; it does not regenerate the historical reconstruction.
+
 ### 2. Storage-attribution sensitivity
 
 The saved attribution study contains 17,000 sampled transaction instances and
@@ -133,7 +138,9 @@ The files are:
 
 The pair `T_min = 2,016`, `T_max = 26,280` is the practical evaluated
 configuration. The threshold results do not establish a universal optimum or a
-production congestion guarantee.
+production congestion guarantee. The verifier checks the six `T_min` values,
+three `T_max` values, and all three 50,000-full-block cases over the 870,430-row
+processed frame.
 
 ### 4. Replicated-storage comparison
 
@@ -165,20 +172,32 @@ policies are:
 - Square-root;
 - Layer-full IM.
 
-These are modeled policy comparisons. They do not establish policy optimality.
+The modeled storage/reduction pairs are Fixed-3 `240.47 TiB / 97.61%`, Fixed-5
+`241.51 TiB / 97.60%`, Logarithmic `245.67 TiB / 97.56%`, Proportional-1%
+`270.10 TiB / 97.32%`, Square-root `279.46 TiB / 97.23%`, and Layer-full IM
+`3,358.18 TiB / 66.67%`. These are modeled policy comparisons. They do not
+establish policy optimality.
 
 ### 6. Alpha sensitivity
 
-The evaluated analytical grid was `alpha` values `0.50`, `0.75`, `1.00`,
-`1.25`, `1.50`, and `2.00`, with `r_IM(alpha) = ceil(alpha * log2(m_IM))`.
-The `alpha = 1` /
-logarithmic configuration is an evaluated operating point and the repository's
-reported baseline, not a universally optimal value.
+Recompute the analytical storage sensitivity from the canonical processed
+block-870429 class-byte row and the existing Logarithmic policy inputs with:
 
-The corresponding portable alpha-sensitivity script and result CSV are not
-bundled in the current tracked checkout. No alpha rerun command is advertised
-here. The reliability values for this analysis are analytical/parametric and
-are not calibrated failure probabilities.
+```bash
+python3 experiments/alpha_sensitivity/reproduce_alpha_sensitivity.py
+```
+
+Inputs are `results/final_paper/data/cumulative_storage_growth_by_class_frame47_simplified.csv`
+and `results/final_paper/data/im_replication_factor_sensitivity.csv`. The script
+writes `results/final_paper/data/alpha_sensitivity.csv`. It evaluates
+`r_IM(alpha) = ceil(alpha * log2(m_IM))` for `m_IM = 6,000` and
+`alpha` values `0.50`, `0.75`, `1.00`, `1.25`, `1.50`, and `2.00`. The result
+spans `r_IM = 7..26`, modeled storage from `242.55` to `252.42 TiB`, and modeled
+reduction from `97.59%` to `97.49%`. At `alpha = 1`, `r_IM = 13` and storage
+matches the existing Logarithmic policy within `1e-9 GiB`. This is an
+analytical/model-derived sensitivity, not a measured storage experiment or a
+reliability calibration; alpha one is an evaluated operating point, not an
+optimality claim.
 
 ### 7. W1--W3 controlled scaling
 
@@ -208,17 +227,50 @@ The reproducible controller for a full rerun is
 a new empty workspace and Bitcoin Core binaries:
 
 ```bash
+W1_W3_ROOT="$(mktemp -d /tmp/mech-scal-w1-w3.XXXXXX)"
+command -v bitcoind >/dev/null || { echo "Install/provide Bitcoin Core first" >&2; exit 1; }
+BITCOIN_BIN_DIR="$(dirname "$(command -v bitcoind)")"
 python3 experiments/scaling_w1_w3/scripts/run_scaling_campaign_w1_w3.py \
-  --base-root /path/to/new/w1-w3-run \
-  --bitcoin-bin /path/to/bitcoin/bin
+  --base-root "$W1_W3_ROOT" \
+  --bitcoin-bin "$BITCOIN_BIN_DIR"
 ```
 
 The frozen outputs and conventions are documented in
 `experiments/scaling_w1_w3/README.md`. Full timing and resource values are
 hardware-dependent; W1--W3 do not establish an asymptotic complexity class or
-throughput preservation.
+throughput preservation. The command still requires the actual Bitcoin Core
+binary directory; it does not install or locate Bitcoin Core for the user.
 
-### 8. Fault, retrieval, and recovery experiments
+### 8. Phase 6 paired processing benchmark
+
+Validate the saved paired Baseline/Mech-Scal processing summary with:
+
+```bash
+python3 scripts/validate_phase6.py results/reference/phase6/phase6_summary.json
+python3 scripts/verify_final_paper_results.py
+```
+
+The saved inputs and outputs are under `results/reference/phase6/`, including
+`raw_processing_runs.csv`, `raw_block_metrics.csv`,
+`raw_lookup_observations.csv`, `paired_processing_comparison.csv`,
+`processing_summary.csv`, and the remaining summary and LaTeX table artifacts.
+The saved summary reports 30 valid pairs, 0 invalid pairs, baseline median
+`3.4474 s`, Mech-Scal median `3.8094 s`, median paired difference `0.3863 s`,
+and median overhead `10.73%`. These are saved local benchmark measurements,
+not production-throughput results. The repository-level verifier also checks
+the saved Phase 6 summary fields and raw CSV row counts.
+
+To opt in to a new local run:
+
+```bash
+bash scripts/run_phase6.sh
+```
+
+This requires a configured local Bitcoin Core/regtest environment and writes
+new artifacts. This audit validated the saved summary and did not rerun the
+benchmark.
+
+### 9. Fault, retrieval, and recovery experiments
 
 The controlled IM resilience path is launched with:
 
@@ -245,9 +297,17 @@ The raw observations are in:
 Scenarios include latency and timeout/withholding behavior, corruption and
 checksum validation, progressive failures, churn, correlated logical failures,
 recovery/repair, and external fallback. Recovery traffic is logical payload
-bytes transferred by the model, not measured NIC/network traffic.
+bytes transferred by the model, not measured NIC/network traffic. The saved
+summary and raw CSV row counts were cross-checked; this audit did not rerun the
+fault campaign. A new run is opt-in and requires the configured local Bitcoin
+Core/regtest environment. Check the frozen summary/raw row counts together
+with the other saved results using:
 
-### 9. Correlated logical-failure scenarios
+```bash
+python3 scripts/verify_final_paper_results.py
+```
+
+### 10. Correlated logical-failure scenarios
 
 `results/reference/phase7/correlated_failure_summary.csv` contains four logical
 failure-domain families—`single-rack`, `two-racks`, `largest-provider`, and
@@ -263,53 +323,67 @@ observations and 58,707,480 logical bytes transferred.
 These are logical failure-domain simulations. The labels do not prove physical
 rack or provider independence, and they are not measurements of real outages.
 
-### 10. `d_eff` sensitivity
+### 11. `d_eff` sensitivity
 
-The current tracked checkout contains no executable `d_eff` sensitivity script
-or result artifact. The analytical placement discussion is therefore not
-presented as a repository-rerunnable experiment. A future artifact should
-include the parameter file, executable analysis, raw/processed output, and a
-validation check before this claim is treated as reproducible.
+Recompute the analytical values from `P_loss = q_D ** d_eff` with:
 
-### 11. Synthetic topology availability
+```bash
+python3 experiments/failure_domain_sensitivity/reproduce_d_eff_sensitivity.py
+```
 
-The current tracked checkout contains no topology configuration, executable
-topology simulator, or topology result bundle. Consequently, this README does
-not claim the synthetic BA/ER/WS topology experiment as reproducible from
-GitHub, and no topology command is provided.
+The script writes `results/final_paper/data/d_eff_analytical_sensitivity.csv`
+with 15 combinations of `d_eff` in `{13, 7, 4, 2, 1}` and illustrative `q_D`
+values in `{0.01, 0.05, 0.10}`. For example, at `q_D = 0.05`, the computed
+`P_loss` values for `d_eff = 13, 7, 4, 2, 1` are respectively
+`1.220703125e-17`, `7.8125e-10`, `6.25e-6`, `2.5e-3`, and `5e-2`. These are
+analytical sensitivity values, not measured
+availability. `q_D` is not empirically calibrated by the prototype, and
+`d_eff` is not measured by it. Thirteen logical replicas do not imply thirteen
+independent physical failure domains; the prototype's logical rack/provider
+labels do not establish physical independence.
 
-The intended scope of that analysis is a 18,000-node synthetic graph with
-6,000 nodes per layer, a 500 ms target, 100,000 requests per topology, and
-topology-specific shortest-path distance surrogates. Those assumptions must be
-reintroduced as tracked configuration and validated artifacts before numerical
-p99 results are treated as repository evidence. They would represent a
-complementary sensitivity model, not measured WAN availability or a physical
-Bitcoin deployment.
+### 12. Synthetic topology availability
+
+The public repository and its available Git history contain no complete
+BA/ER/WS experiment package. A detached local workspace copy contains a
+candidate simulator, raw and summarized outputs, and a report, but the exact
+configuration used for that run is absent. Without that input the candidate
+cannot be rerun or certified against its reported p50/p95/p99 values. Status:
+**MISSING — ORIGINAL EXPERIMENTAL ARTIFACT NOT PRESENT**. No topology-delay
+result is presented here as a repository reproduction. Detached candidate
+files without established provenance and the exact run configuration do not
+close this gap. To complete this evidence block, recover the original run
+original source, configuration, seeds, dependencies, and outputs, then verify
+their provenance before rerunning that original implementation. Any resulting
+values would remain a synthetic availability-sensitivity model, not measured
+WAN latency or a physical Bitcoin deployment.
 
 ## Experiment-to-artifact map
 
-| Experiment | Executable path | Main result/artifact path | Status |
-| --- | --- | --- | --- |
-| Mainnet arithmetic audit | `scripts/verify_final_paper_results.py` | `results/final_paper/data/` | Processed evidence; no full-chain rerun |
-| Attribution A/B/C | `scripts/verify_final_paper_results.py` | `results/final_paper/data/final_attribution_abc.csv` | Included |
-| Threshold sensitivity | `scripts/verify_final_paper_results.py` | `results/final_paper/data/tmin_sensitivity_summary.csv` | Included |
-| 50,000-block stress | `scripts/verify_final_paper_results.py` | `results/final_paper/data/full_blocks_50000_summary.csv` | Included |
-| Replication policies | `scripts/verify_final_paper_results.py` | `results/final_paper/data/im_replication_factor_sensitivity.csv` | Included |
-| W1--W3 frozen verification | `experiments/scaling_w1_w3/analysis/reproduce_table6.py` | `experiments/scaling_w1_w3/results/table6_reproduced.csv` | Included |
-| W1--W3 full campaign | `experiments/scaling_w1_w3/scripts/run_scaling_campaign_w1_w3.py` | New user-selected output workspace | Opt-in, hardware-dependent |
-| Fault/recovery | `scripts/run_phase7.sh` | `results/reference/phase7/` | Included reference artifacts |
-| Correlated logical failures | `scripts/run_phase7.sh` | `results/reference/phase7/correlated_failure_summary.csv` | Included reference artifact |
-| Alpha sensitivity | Not bundled | Not bundled in current checkout | Missing portable artifact |
-| `d_eff` sensitivity | Not bundled | Not bundled in current checkout | Missing executable artifact |
-| Synthetic topology | Not bundled | Not bundled in current checkout | Missing config/script/results |
+| Evidence | Type | Script | Inputs | Output | Status |
+| --- | --- | --- | --- | --- | --- |
+| Historical class/storage accounting through block 870429 | Historical mainnet reconstruction; processed evidence | `scripts/verify_final_paper_results.py` | `results/final_paper/data/cumulative_storage_growth_by_class_frame47_simplified.csv`; `results/final_paper/data/final_frame_metadata.json` | `results/final_paper/data/class_storage_summary.csv` | VERIFIED |
+| Full raw-chain reconstruction | Historical mainnet reconstruction | No full-chain runner in this checkout | Raw chain blocks and original extractor are not packaged | Processed frame only; no fresh raw-chain output | PARTIAL |
+| Attribution A/B/C | Analytical/model-derived attribution on a sampled historical frame | `scripts/verify_final_paper_results.py` | `results/final_paper/data/final_selection_manifest.csv`; `results/final_paper/data/final_attribution_abc.csv` | `results/final_paper/data/storage_attribution_summary.csv` | VERIFIED |
+| Thresholds and 50,000-full-block stress | Analytical/model-derived sensitivity | `scripts/verify_final_paper_results.py` | `results/final_paper/data/tmin_sensitivity_summary.csv`; `results/final_paper/data/tmax_sensitivity_summary.csv`; `results/final_paper/data/full_blocks_50000_summary.csv`; `results/final_paper/data/tmin_delta_identity_audit.csv` | Saved CSVs, checked for consistency | VERIFIED |
+| Table 5 replication comparison | Analytical/model-derived storage | `scripts/verify_final_paper_results.py` | `results/final_paper/data/cumulative_storage_growth_by_class_frame47_simplified.csv`; `results/final_paper/data/im_replication_factor_sensitivity.csv` | `results/final_paper/data/replicated_storage_table5.csv` | VERIFIED |
+| Replication-policy sensitivity | Analytical/model-derived storage | `scripts/verify_final_paper_results.py` | `results/final_paper/data/im_replication_factor_sensitivity.csv`; `results/final_paper/data/cumulative_storage_growth_by_class_frame47_simplified.csv` | `results/final_paper/data/replication_policy_summary.csv` | VERIFIED |
+| Alpha sensitivity | Analytical/model-derived storage sensitivity | `experiments/alpha_sensitivity/reproduce_alpha_sensitivity.py` | `results/final_paper/data/cumulative_storage_growth_by_class_frame47_simplified.csv`; `results/final_paper/data/im_replication_factor_sensitivity.csv` | `results/final_paper/data/alpha_sensitivity.csv` | VERIFIED |
+| d_eff sensitivity | Analytical failure-probability sensitivity; not measured availability | `experiments/failure_domain_sensitivity/reproduce_d_eff_sensitivity.py` | Declared equation and illustrative inputs in the script | `results/final_paper/data/d_eff_analytical_sensitivity.csv` | VERIFIED |
+| Phase 6 saved paired benchmark | Controlled local Bitcoin Core/regtest processing experiment | `scripts/verify_final_paper_results.py` | `results/reference/phase6/phase6_summary.json`; `raw_processing_runs.csv`; `raw_block_metrics.csv`; `raw_lookup_observations.csv` | Saved Phase 6 summary, raw observations, derived summaries, and tables in `results/reference/phase6/` | VERIFIED |
+| Phase 6 fresh benchmark | Controlled local Bitcoin Core/regtest processing experiment | `scripts/run_phase6.sh` | Configured local Bitcoin Core/regtest environment | New outputs under `results/reference/phase6/` | PARTIAL |
+| W1--W3 frozen table and public-hash verification | Controlled local regtest evidence; saved-artifact verification | `experiments/scaling_w1_w3/analysis/reproduce_table6.py`; `experiments/scaling_w1_w3/analysis/verify_public_artifacts.py` | Frozen W1--W3 outputs and public hash manifest | `experiments/scaling_w1_w3/results/table6_reproduced.csv`; 23 validated hashes | VERIFIED |
+| W1--W3 fresh campaign | Controlled local Bitcoin Core/regtest experiment | `experiments/scaling_w1_w3/scripts/run_scaling_campaign_w1_w3.py` | Frozen workloads, Bitcoin Core binaries, new workspace | User-selected new campaign workspace | PARTIAL |
+| Phase 7 saved fault/recovery evidence | Controlled local logical fault/recovery experiment | `scripts/verify_final_paper_results.py` | `results/reference/phase7/phase7_summary.json`; `raw_retrieval_observations.csv`; `raw_recovery_observations.csv` | Saved Phase 7 summary and raw retrieval/recovery CSVs in `results/reference/phase7/` | VERIFIED |
+| BA/ER/WS topology-delay study | Synthetic topology/queueing simulation | Original executable is not present in this checkout | Original run configuration and provenance are absent | No certified reproduction output | MISSING |
 
 ## Experimental dataset
 
-Large or raw experimental materials may be distributed separately from this
-repository. The associated dataset record is the Harvard Dataverse DOI
-[`10.7910/DVN/QBFA7Y`](https://doi.org/10.7910/DVN/QBFA7Y). This repository
-contains only the compact experimental files explicitly listed in its artifact
-maps; it does not contain the manuscript or a manuscript submission package.
+Large or raw experimental materials are not included in this repository. The
+existence, contents, and completeness of any external dataset record have not
+been verified in this audit. This repository contains only the compact
+experimental files listed in its artifact maps; it does not contain the
+manuscript or a manuscript submission package.
 
 ## Scope and limitations
 
