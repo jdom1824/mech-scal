@@ -352,9 +352,9 @@ cannot be rerun or certified against its reported p50/p95/p99 values. Status:
 **MISSING — ORIGINAL EXPERIMENTAL ARTIFACT NOT PRESENT**. No topology-delay
 result is presented here as a repository reproduction. Detached candidate
 files without established provenance and the exact run configuration do not
-close this gap. To complete this evidence block, recover the original run
-original source, configuration, seeds, dependencies, and outputs, then verify
-their provenance before rerunning that original implementation. Any resulting
+close this gap. To complete this evidence block, recover the original source
+code, run configuration, seeds, dependencies, and outputs, then verify their
+provenance before rerunning that implementation. Any resulting
 values would remain a synthetic availability-sensitivity model, not measured
 WAN latency or a physical Bitcoin deployment.
 
